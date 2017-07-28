@@ -23,9 +23,9 @@ class User(models.Model):
 class Phrase(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     phrase = models.TextField()
-    phrase_lang = models.CharField(default='English', max_length=100)
+    phrase_lang = models.CharField(default='en-US', max_length=100)
     translation = models.TextField()
-    translation_lang = models.CharField(default='Spanish', max_length=100)
+    translation_lang = models.CharField(default='es-MX', max_length=100)
     user = models.ForeignKey('User',related_name="phrase")
 
 
