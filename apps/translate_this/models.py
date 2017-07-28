@@ -6,14 +6,15 @@ from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
 
-LEXERS = [item for item in get_all_lexers() if item[1]]
-LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
+# LEXERS = [item for item in get_all_lexers() if item[1]]
+# LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
 # STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 
 
 class User(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     username = models.CharField(max_length=100, blank=True, default='')
+    email = models.CharField(max_length=100, blank=True, default='')
 
     class Meta:
         ordering = ('created',)
@@ -22,9 +23,9 @@ class User(models.Model):
 class Phrase(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     phrase = models.TextField()
-    phrase_lang = models.CharField(choices=LANGUAGE_CHOICES, default='English', max_length=100)
+    phrase_lang = models.CharField(default='English', max_length=100)
     translation = models.TextField()
-    translation_lang = models.CharField(choices=LANGUAGE_CHOICES, default='Spanish', max_length=100)
+    translation_lang = models.CharField(default='Spanish', max_length=100)
     user = models.ForeignKey('User',related_name="phrase")
 
 
