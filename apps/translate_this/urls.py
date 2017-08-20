@@ -7,6 +7,8 @@ urlpatterns = [
     url(r'^users/(?P<pk>[0-9]+)/$', views.user_detail),
     url(r'^phrases/$', views.phrase_list),
     url(r'^phrases/(?P<pk>[0-9]+)/$', views.phrase_detail),
+    url(r'^photos/$', views.photo_list),
+    url(r'^photos/(?P<pk>[0-9]+)/$', views.photo_detail),
     # url(r'^$', views.index)
 ]
 

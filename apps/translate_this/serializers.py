@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import User, Phrase, Image
+from . models import User, Phrase, Photo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,10 +17,11 @@ class PhraseSerializer(serializers.ModelSerializer):
                   'translation_lang', 'user', 'created')
 
 
-class ImageSerializer(serializers.ModelSerializer):
+class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Image
-        fields = ('id', 'image', 'user', 'created')
+        model = Photo
+        fields = ('id', 'image', 'email', 'user',
+                  'phrase', 'phrase_lang', 'created')
         # fields = ('id', 'phrase', 'phrase_lang', 'translation',
         #           'translation_lang', 'user', 'created')

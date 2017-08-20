@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class ImageManager(models.Manager):
+class PhotoManager(models.Manager):
 
     def img_to_text(self, post):
         errors = []
@@ -38,16 +38,17 @@ class Phrase(models.Model):
         ordering = ('created',)
 
 
-class Image(models.Model):
+class Photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(
-        max_length=None, allow_empty_file=False, upload_to='documents/')
-    # phrase = models.TextField()
-    # phrase_lang = models.CharField(default='en-US', max_length=100)
+    image = models.ImageField(upload_to='documents/')
+    email = models.EmailField(max_length=254)
+    user = models.CharField(max_length=110)
+    phrase = models.TextField(default='new')
+    phrase_lang = models.CharField(default='en-US', max_length=100)
     # translation = models.TextField()
     # translation_lang = models.CharField(default='es-MX', max_length=100)
-    user = models.ForeignKey('User', related_name="image")
-    objects = ImageManager()
+    # user = models.ForeignKey('User', related_name="image")
+    # objects = ImageManager()
 
     class Meta:
         ordering = ('created',)

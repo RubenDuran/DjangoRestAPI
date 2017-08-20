@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import urllib
 
 
 # from django.views.decorators.csrf import csrf_exempt
@@ -11,8 +14,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-from . models import User, Phrase, Image
-from . serializers import UserSerializer, PhraseSerializer, ImageSerializer
+from . models import User, Phrase, Photo
+from . serializers import UserSerializer, PhraseSerializer, PhotoSerializer
+
+try:
+    import Image
+    import ImageEnhance
+    import ImageFilter
+except ImportError:
+    from PIL import Image, ImageEnhance, ImageFilter
+import pytesseract as pts
 
 
 @api_view(['GET', 'POST'])
@@ -104,44 +115,59 @@ def phrase_detail(request, pk, format=None):
 
 
 @api_view(['GET', 'POST'])
-def image_list(request, format=None):
+def photo_list(request, format=None):
     """
-    List all images, or create a new image.
+    List of all photos, or create a new photo.
     """
     if request.method == 'GET':
-        images = Image.objects.all()
-        serializer = ImageSerializer(images, many=True)
+        photos = Photo.objects.all()
+        serializer = PhotoSerializer(photos, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        serializer = ImageSerializer(data=request.data)
+        serializer = PhotoSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            x = serializer.save()
+            print x.image
+            im = Image.open("./media/{}".format(x.image))
+            im = im.filter(ImageFilter.MedianFilter())
+            enhancer = ImageEnhance.Contrast(im)
+            im = enhancer.enhance(2)
+            im = im.convert('1')
+            im.save('./media/{}'.format(x.image))
+            text = pts.image_to_string(
+                Image.open('./media/{}'.format(x.image)))
+            text = text.replace('\n', '')
+            print(text)
+            x.phrase = text
+            x.save()
+            print serializer.data
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def image_detail(request, pk, format=None):
+def photo_detail(request, pk, format=None):
     """
-    Retrieve, update or delete a image instance.
+    Retrieve, update or delete a photo instance.
     """
     try:
-        image = Image.objects.get(pk=pk)
-    except Image.DoesNotExist:
+        photo = Photo.objects.get(pk=pk)
+    except Photo.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = ImageSerializer(image)
+        serializer = PhotoSerializer(photo)
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = ImageSerializer(image, data=request.data)
+        serializer = PhotoSerializer(photo, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        image.delete()
+        photo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
