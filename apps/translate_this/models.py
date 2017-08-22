@@ -41,10 +41,10 @@ class Phrase(models.Model):
 class Photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='documents/')
-    email = models.EmailField(max_length=254)
-    user = models.CharField(max_length=110)
+    # email = models.EmailField(max_length=254)
     phrase = models.TextField(default='new')
     phrase_lang = models.CharField(default='en-US', max_length=100)
+    user = models.ForeignKey('User', related_name="photo")
     # translation = models.TextField()
     # translation_lang = models.CharField(default='es-MX', max_length=100)
     # user = models.ForeignKey('User', related_name="image")
