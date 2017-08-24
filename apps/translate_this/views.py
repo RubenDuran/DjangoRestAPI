@@ -129,17 +129,25 @@ def photo_list(request, format=None):
         if serializer.is_valid():
             x = serializer.save()
             print x.image
+
             im = Image.open("./media/{}".format(x.image))
             im = im.filter(ImageFilter.MedianFilter())
             enhancer = ImageEnhance.Contrast(im)
             im = enhancer.enhance(2)
             im = im.convert('1')
             im.save('./media/{}'.format(x.image))
-            text = pts.image_to_string(
-                Image.open('./media/{}'.format(x.image)))
-            text = text.replace('\n', '')
-            print(text)
-            x.phrase = text
+            try:
+                text = pts.image_to_string(
+                    Image.open('./media/{}'.format(x.image)))
+                if text == "":
+                    x.phrase = "couldn't read image"
+                else:
+                    text = text.replace('\n', ' ')
+                    print(text)
+                    x.phrase = text
+            except:
+                x.phrase = 'exeption found converting image to string'
+
             x.save()
             print serializer.data
 
