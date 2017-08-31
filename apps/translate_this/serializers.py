@@ -23,5 +23,3 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ('id', 'image', 'user',
                   'phrase', 'phrase_lang', 'created')
-        # fields = ('id', 'phrase', 'phrase_lang', 'translation',
-        #           'translation_lang', 'user', 'created')

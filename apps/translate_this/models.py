@@ -1,20 +1,12 @@
 from __future__ import unicode_literals
 from django.db import models
+import uuid
 
 
-class PhotoManager(models.Manager):
-
-    def img_to_text(self, post):
-        errors = []
-        # if len(post['prod_name']) < 1:
-        #     errors.append('Field may not be empty')
-        # if len(post['prod_name']) < 3:
-        #     errors.append(
-        #         'Product/Item name must be at least 3 characters long')
-        # check_product = self.filter(prod_name=post['prod_name'])
-        # if check_product:
-        #     errors.append('Product already exist in the database')
-        return errors
+def gen_rand_filename(instance, filename):
+    """Generate a unique filename for uploaded file or image."""
+    extension = filename.split(".")[-1]
+    return "documents/{}.{}".format(uuid.uuid4(), extension)
 
 
 class User(models.Model):
@@ -40,26 +32,11 @@ class Phrase(models.Model):
 
 class Photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='documents/')
-    # email = models.EmailField(max_length=254)
+    # image = models.ImageField(upload_to='documents/')
+    image = models.ImageField('Uploaded Image', upload_to=gen_rand_filename)
     phrase = models.TextField(default='new')
     phrase_lang = models.CharField(default='en-US', max_length=100)
     user = models.ForeignKey('User', related_name="photo")
-    # translation = models.TextField()
-    # translation_lang = models.CharField(default='es-MX', max_length=100)
-    # user = models.ForeignKey('User', related_name="image")
-    # objects = ImageManager()
 
     class Meta:
         ordering = ('created',)
-
-# class Snippet(models.Model):
-#     created = models.DateTimeField(auto_now_add=True)
-#     title = models.CharField(max_length=100, blank=True, default='')
-#     code = models.TextField()
-#     linenos = models.BooleanField(default=False)
-#     language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
-#     style = models.CharField(choices=STYLE_CHOICES, default='friendly', max_length=100)
-
-    # class Meta:
-    #     ordering = ('created',)

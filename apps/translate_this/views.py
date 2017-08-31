@@ -179,3 +179,7 @@ def photo_detail(request, pk, format=None):
     elif request.method == 'DELETE':
         photo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def index(request):
+    return render(request, 'translate_this/index.html')
